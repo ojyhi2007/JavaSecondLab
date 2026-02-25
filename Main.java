@@ -10,22 +10,22 @@ public class Main {
         while (running) {
 
             System.out.println("\nВыберите задание:");
-            System.out.println("1 — Точка (Point)");
-            System.out.println("2 — Линии (Line)");
-            System.out.println("3 — Студент (копирование оценок)");
-            System.out.println("4 — Студент V2 (один конструктор)");
-            System.out.println("5 — Студент-отличник (StudentV3)");
+            System.out.println("1 — Point (3 точки)");
+            System.out.println("2 — Line (3 линии по условию)");
+            System.out.println("3 — Student (копирование оценок: Вася/Петя/Андрей)");
+            System.out.println("4 — StudentV2 (Вася с оценками, Максим без)");
+            System.out.println("5 — StudentV3 (средний балл и отличник)");
             System.out.println("0 — Выход");
             System.out.print("Ваш выбор: ");
 
             int choice = readInt(scanner);
 
             switch (choice) {
-                case 1 -> taskPoint(scanner);
+                case 1 -> taskPoint();
                 case 2 -> taskLine();
                 case 3 -> taskStudent();
-                case 4 -> taskStudentV2(scanner);
-                case 5 -> taskStudentV3();   // ⬅ БЕЗ ВВОДА
+                case 4 -> taskStudentV2();
+                case 5 -> taskStudentV3();
                 case 0 -> {
                     System.out.println("Завершение работы.");
                     running = false;
@@ -37,23 +37,26 @@ public class Main {
         scanner.close();
     }
 
-    private static void taskPoint(Scanner scanner) {
-        System.out.print("Введите X: ");
-        int x = readInt(scanner);
+    private static void taskPoint() {
 
-        System.out.print("Введите Y: ");
-        int y = readInt(scanner);
+        Point p1 = new Point(3, 5);
+        Point p2 = new Point(25, 6);
+        Point p3 = new Point(7, 8);
 
-        Point p = new Point(x, y);
-        System.out.println("Создана точка: " + p);
+        System.out.println("Точки:");
+        System.out.println(p1);
+        System.out.println(p2);
+        System.out.println(p3);
     }
 
     private static void taskLine() {
-
         Line line1 = new Line(new Point(1, 3), new Point(23, 8));
+
         Line line2 = new Line(new Point(5, 10), new Point(25, 10));
+
         Line line3 = new Line(line1.getStart(), line2.getEnd());
 
+        System.out.println("После создания:");
         System.out.println(line1);
         System.out.println(line2);
         System.out.println(line3);
@@ -61,11 +64,18 @@ public class Main {
         line1.setStart(new Point(0, 0));
         line2.setEnd(new Point(30, 10));
 
-        System.out.println("После изменения:");
+        line3.setStart(line1.getStart());
+        line3.setEnd(line2.getEnd());
+
+        System.out.println("\nПосле изменения line1 и line2 (п.4):");
+        System.out.println(line1);
+        System.out.println(line2);
         System.out.println(line3);
 
         line1.setStart(new Point(-5, -5));
-        System.out.println("После замены линии 1:");
+
+        System.out.println("\nПосле изменения line1 (п.5, line3 не меняется):");
+        System.out.println(line1);
         System.out.println(line3);
     }
 
@@ -73,36 +83,32 @@ public class Main {
 
         int[] grades = {3, 4, 5};
         Student vasya = new Student("Вася", grades);
+
         Student petya = new Student("Петя", vasya.getGrades());
 
         petya.getGrades()[0] = 5;
 
+        System.out.println("После изменения оценки Пети:");
         System.out.println(vasya);
         System.out.println(petya);
+
+        int[] copy = vasya.getGrades().clone();
+        Student andrey = new Student("Андрей", copy);
+
+        vasya.getGrades()[1] = 2;
+
+        System.out.println("\nПосле изменения оценки Васи:");
+        System.out.println(vasya);
+        System.out.println(andrey);
     }
 
-    private static void taskStudentV2(Scanner scanner) {
+    private static void taskStudentV2() {
 
-        System.out.print("Введите имя: ");
-        String name = scanner.next();
+        StudentV2 vasya = new StudentV2("Вася", new int[]{3, 4, 5});
+        StudentV2 maxim = new StudentV2("Максим");
 
-        System.out.print("Количество оценок: ");
-        int count = readInt(scanner);
-
-        if (count == 0) {
-            StudentV2 student = new StudentV2(name);
-            System.out.println(student);
-            return;
-        }
-
-        int[] grades = new int[count];
-        for (int i = 0; i < count; i++) {
-            System.out.print("Оценка " + (i + 1) + ": ");
-            grades[i] = readInt(scanner);
-        }
-
-        StudentV2 student = new StudentV2(name, grades);
-        System.out.println(student);
+        System.out.println(vasya);
+        System.out.println(maxim);
     }
 
     private static void taskStudentV3() {
@@ -115,17 +121,17 @@ public class Main {
         printStudentInfo(petya);
     }
 
+    private static void printStudentInfo(StudentV3 student) {
+        System.out.println(student);
+        System.out.println("Средний балл: " + student.getAverageGrade());
+        System.out.println("Отличник: " + student.isExcellentStudent());
+    }
+
     private static int readInt(Scanner scanner) {
         while (!scanner.hasNextInt()) {
             System.out.print("Ошибка! Введите целое число: ");
             scanner.next();
         }
         return scanner.nextInt();
-    }
-
-    private static void printStudentInfo(StudentV3 student) {
-        System.out.println(student);
-        System.out.println("Средний балл: " + student.getAverageGrade());
-        System.out.println("Отличник: " + student.isExcellentStudent());
     }
 }
